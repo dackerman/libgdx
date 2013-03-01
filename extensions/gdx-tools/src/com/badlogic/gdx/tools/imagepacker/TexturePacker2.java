@@ -25,7 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.imageio.IIOImage;
@@ -458,7 +458,7 @@ public class TexturePacker2 {
 		if (!inputFile.isDirectory()) return inputFile.lastModified() > outputFile.lastModified();
 
 		// Recurse through the directory tree in the input folder. If any dates are newer than output, return true.
-		Queue<File> files = new PriorityQueue<File>();
+		Queue<File> files = new LinkedList<File>();
 		files.add(inputFile);
 		while (!files.isEmpty()) {
 			File currentFile = files.remove();
