@@ -25,6 +25,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -453,7 +455,19 @@ public class TexturePacker2 {
 
 		File inputFile = new File(input);
 		if (!inputFile.exists()) throw new IllegalArgumentException("Input file does not exist: " + inputFile.getAbsolutePath());
-		return inputFile.lastModified() > outputFile.lastModified();
+		if (!inputFile.isDirectory()) return inputFile.lastModified() > outputFile.lastModified();
+
+		// Recurse through the directory tree in the input folder. If any dates are newer than output, return true.
+		Queue<File> files = new PriorityQueue<File>();
+		files.add(inputFile);
+		while (!files.isEmpty()) {
+			File currentFile = files.remove();
+			if (currentFile.lastModified() > outputFile.lastModified()) return true;
+			for (File file : currentFile.listFiles()) {
+				if (file.isDirectory()) files.add(file);
+			}
+		}
+		return false;
 	}
 
 	static public void processIfModified (String input, String output, String packFileName) {
